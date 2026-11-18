@@ -19,4 +19,6 @@ jobs:
         with:
           version: v1.9.0
       - run: forge fmt --check
+      - run: forge lint
       - run: forge build --sizes
+      - run: forge test
