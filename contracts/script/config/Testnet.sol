@@ -20,11 +20,4 @@ library Testnet {
         if (chainId == UNICHAIN_SEPOLIA) return UNICHAIN_SEPOLIA_CALLBACK_PROXY;
         revert UnknownChain(chainId);
     }
-
-    /// @notice The other chain of the arbitrage pair: HUNT bridges between these two only.
-    function peerChain(uint256 chainId) internal pure returns (uint256) {
-        if (chainId == BASE_SEPOLIA) return UNICHAIN_SEPOLIA;
-        if (chainId == UNICHAIN_SEPOLIA) return BASE_SEPOLIA;
-        revert UnknownChain(chainId);
-    }
 }
