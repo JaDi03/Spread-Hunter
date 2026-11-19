@@ -7,7 +7,7 @@ import {Testnet} from "../../script/config/Testnet.sol";
 import {SpikeEmitter} from "../../src/spike/SpikeEmitter.sol";
 import {SpikeReactive} from "../../src/spike/SpikeReactive.sol";
 import {SpikeCallback} from "../../src/spike/SpikeCallback.sol";
-import {MockSystem} from "./Spike.t.sol";
+import {MockSystem} from "../utils/MockSystem.sol";
 
 contract SpikeDeployTest is Test {
     SpikeDeploy internal script;
