@@ -8,15 +8,22 @@ Built for the Reactive Omni Buildathon (track "Every Second Counts").
 
 ## Requirements
 
-- [Foundry](https://getfoundry.sh/introduction/installation) v1.9.0
+- [Git](https://git-scm.com/downloads)
+- [Foundry](https://www.getfoundry.sh/introduction/installation) v1.9.0 (`forge`, `cast`)
+- To deploy: a wallet used only for testnets, with ETH on Base Sepolia and Unichain Sepolia and lREACT on Reactive Lasna (how to get lREACT is below)
 
-## Build
+## Build and test
 
 ```bash
-git clone --recurse-submodules <repo-url>
-cd SpreadHunter/contracts
+git clone --recurse-submodules https://github.com/JaDi03/Spread-Hunter.git
+cd Spread-Hunter/contracts
 forge build
+forge test
 ```
+
+If you cloned without `--recurse-submodules`, run `git submodule update --init --recursive` inside `Spread-Hunter` first.
+
+On Windows, nested submodules can pass the 260-character path limit (`Filename too long`). Enable long paths before cloning: `git config --global core.longpaths true`.
 
 ## Loop test on testnet
 
@@ -62,6 +69,30 @@ Each step prints the address the next one needs. Check the result with:
 
 ```bash
 cast call <CALLBACK> "pongCount()(uint256)" --rpc-url base_sepolia
+```
+
+## HUNT bridge
+
+HUNT is the test token traded against USDC. It moves between Base Sepolia and Unichain Sepolia through Reactive: the bridge on one chain burns it, a reactive contract on Lasna sees the request, and the bridge on the other chain mints it, in about one to three seconds.
+
+You need ETH on Base Sepolia and Unichain Sepolia and lREACT on Lasna (see above). From `contracts/`, with the variables from `.env` loaded and `W` set as in the loop test:
+
+```bash
+B=script/BridgeDeploy.s.sol:BridgeDeploy
+
+# 1. Reactive relay on Lasna, funded with lREACT in wei. It goes first: the bridges need its address
+forge script $B --sig "reactive(uint256)" <FUNDING> --rpc-url lasna $W --broadcast
+# 2. Token and bridge on each chain: relay address, initial HUNT supply and bridge ETH funding, in wei
+forge script $B --sig "pair(address,uint256,uint256)" <RELAY> <SUPPLY> <FUNDING> --rpc-url base_sepolia $W --broadcast
+forge script $B --sig "pair(address,uint256,uint256)" <RELAY> <SUPPLY> <FUNDING> --rpc-url unichain_sepolia $W --broadcast
+# 3. Link both bridges to the relay
+forge script $B --sig "link(address,address,address)" <RELAY> <BASE_BRIDGE> <UNICHAIN_BRIDGE> --rpc-url lasna $W --broadcast
+```
+
+The initial supply is the only mint outside the bridge. Then move 1 HUNT to the other chain:
+
+```bash
+cast send <BASE_BRIDGE> "bridge(address,uint256)" $DEPLOYER_ADDRESS 1000000000000000000 --rpc-url base_sepolia --account $DEPLOYER_ACCOUNT
 ```
 
 ## License

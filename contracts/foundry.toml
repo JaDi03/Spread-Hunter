@@ -11,6 +11,7 @@ optimizer_runs = 200
 remappings = [
     "forge-std/=lib/forge-std/src/",
     "@reactive/=lib/reactive-lib-omni/",
+    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
 ]
 
 [fmt]
