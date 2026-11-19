@@ -8,15 +8,22 @@ Built for the Reactive Omni Buildathon (track "Every Second Counts").
 
 ## Requirements
 
-- [Foundry](https://getfoundry.sh/introduction/installation) v1.9.0
+- [Git](https://git-scm.com/downloads)
+- [Foundry](https://www.getfoundry.sh/introduction/installation) v1.9.0 (`forge`, `cast`)
+- To deploy: a wallet used only for testnets, with ETH on Base Sepolia and Unichain Sepolia and lREACT on Reactive Lasna (how to get lREACT is below)
 
-## Build
+## Build and test
 
 ```bash
-git clone --recurse-submodules <repo-url>
-cd SpreadHunter/contracts
+git clone --recurse-submodules https://github.com/JaDi03/Spread-Hunter.git
+cd Spread-Hunter/contracts
 forge build
+forge test
 ```
+
+If you cloned without `--recurse-submodules`, run `git submodule update --init --recursive` inside `Spread-Hunter` first.
+
+On Windows, nested submodules can pass the 260-character path limit (`Filename too long`). Enable long paths before cloning: `git config --global core.longpaths true`.
 
 ## Loop test on testnet
 
