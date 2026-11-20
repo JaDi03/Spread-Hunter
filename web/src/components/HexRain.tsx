@@ -30,7 +30,7 @@ export function HexRain({ hashes, reducedMotion, visible }: { hashes: string[]; 
     let h = 0
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     const drops: Drop[] = []
-    const palette = ['rgba(120,150,255,', 'rgba(255,90,180,', 'rgba(200,255,60,', 'rgba(220,220,210,']
+    const palette = ['rgba(120,150,255,', 'rgba(255,90,180,', 'rgba(29,255,122,', 'rgba(220,220,210,']
 
     const resize = () => {
       w = canvas.clientWidth

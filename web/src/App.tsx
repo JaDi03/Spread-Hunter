@@ -26,10 +26,7 @@ export default function App() {
     <div className="page">
       <header className="top">
         <div className="brand">
-          <span className="mark" aria-hidden="true">
-            <i /><i /><i />
-          </span>
-          <span className="word">SpreadHunter</span>
+          <img className="logo" src="/logo.svg" alt="SpreadHunter" width="177" height="30" />
           <span className="net">TESTNET</span>
         </div>
         <StatusBar feed={feed} />
