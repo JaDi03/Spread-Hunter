@@ -78,7 +78,7 @@ abstract contract ExecutorTestBase is Test {
         uint256 amountIn = 1e6;
         uint256 expected = _quote(POOL_USDC, POOL_TOKEN, amountIn);
         vm.recordLogs();
-        _leg("a", true, amountIn, 0, 0);
+        _leg("a", true, amountIn, 1, 0);
         uint256 out = token.balanceOf(address(ex)) - INV_TOKEN;
 
         assertEq(usdc.balanceOf(address(ex)), INV_USDC - amountIn);
@@ -91,7 +91,7 @@ abstract contract ExecutorTestBase is Test {
     function test_sellLeg_paysTokenAndReceivesUsdc() public {
         uint256 amountIn = 100e18;
         uint256 expected = _quote(POOL_TOKEN, POOL_USDC, amountIn);
-        _leg("b", false, amountIn, 0, 0);
+        _leg("b", false, amountIn, 1, 0);
         uint256 out = usdc.balanceOf(address(ex)) - INV_USDC;
 
         assertEq(token.balanceOf(address(ex)), INV_TOKEN - amountIn);
@@ -100,7 +100,7 @@ abstract contract ExecutorTestBase is Test {
 
     function test_leg_emitsInventoryAfterTrade() public {
         vm.recordLogs();
-        _leg("c", true, 1e6, 0, 0);
+        _leg("c", true, 1e6, 1, 0);
         (uint256 u, uint256 t) = _lastInventory();
         assertEq(u, usdc.balanceOf(address(ex)));
         assertEq(t, token.balanceOf(address(ex)));
@@ -112,7 +112,7 @@ abstract contract ExecutorTestBase is Test {
         // buying the token moves the price toward the limit; stop 0.1% away
         uint160 limit = usdcIs0 ? uint160(uint256(price) * 9995 / 10_000) : uint160(uint256(price) * 10_005 / 10_000);
         vm.recordLogs();
-        _leg("d", true, 50e6, 0, limit);
+        _leg("d", true, 50e6, 1, limit);
 
         uint256 spent = INV_USDC - usdc.balanceOf(address(ex));
         _assertExecuted("d", true, spent, token.balanceOf(address(ex)) - INV_TOKEN);
@@ -133,10 +133,10 @@ abstract contract ExecutorTestBase is Test {
     }
 
     function test_leg_reusedIdFailsWithoutSecondSwap() public {
-        _leg("f", true, 1e6, 0, 0);
+        _leg("f", true, 1e6, 1, 0);
         uint256 usdcAfterFirst = usdc.balanceOf(address(ex));
         vm.recordLogs();
-        _leg("f", true, 1e6, 0, 0);
+        _leg("f", true, 1e6, 1, 0);
         assertEq(usdc.balanceOf(address(ex)), usdcAfterFirst);
         _assertFailedWith("f", Executor.LegReused.selector);
     }
@@ -154,20 +154,27 @@ abstract contract ExecutorTestBase is Test {
         vm.prank(owner);
         ex.setPaused(true);
         vm.recordLogs();
-        _leg("h", true, 1e6, 0, 0);
+        _leg("h", true, 1e6, 1, 0);
         _assertNoFundsMoved();
         _assertFailedWith("h", Executor.LegPaused.selector);
     }
 
     function test_leg_zeroAmountFails() public {
         vm.recordLogs();
-        _leg("i", true, 0, 0, 0);
+        _leg("i", true, 0, 1, 0);
         _assertFailedWith("i", Executor.ZeroAmount.selector);
+    }
+
+    function test_leg_zeroMinimumFailsWithoutMovingFunds() public {
+        vm.recordLogs();
+        _leg("m", true, 1e6, 0, 0);
+        _assertNoFundsMoved();
+        _assertFailedWith("m", Executor.ZeroMinimum.selector);
     }
 
     function test_leg_moreThanInventoryFailsWithoutMovingFunds() public {
         vm.recordLogs();
-        _leg("j", true, INV_USDC + 1, 0, 0);
+        _leg("j", true, INV_USDC + 1, 1, 0);
         _assertNoFundsMoved();
         _assertFailed("j");
     }
@@ -269,7 +276,7 @@ abstract contract ExecutorTestBase is Test {
     function test_tokenBalanceReverting_failsLegWithoutReverting() public {
         vm.mockCallRevert(address(token), abi.encodeWithSelector(IERC20.balanceOf.selector, address(ex)), "boom");
         vm.recordLogs();
-        _leg("o", true, 1e6, 0, 0);
+        _leg("o", true, 1e6, 1, 0);
         assertEq(usdc.balanceOf(address(ex)), INV_USDC);
         _assertFailed("o");
     }
@@ -277,9 +284,17 @@ abstract contract ExecutorTestBase is Test {
     function test_emptyRevert_stillEmitsLegFailed() public {
         vm.mockCallRevert(address(usdc), abi.encodeWithSelector(IERC20.balanceOf.selector, address(ex)), "");
         vm.recordLogs();
-        _leg("p", true, 1e6, 0, 0);
+        _leg("p", true, 1e6, 1, 0);
         assertTrue(ex.legUsed("p"));
-        _assertFailed("p");
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+        bool found;
+        for (uint256 i; i < logs.length; ++i) {
+            if (logs[i].topics[0] == LegFailed.selector && logs[i].topics[1] == "p") {
+                assertEq(abi.decode(logs[i].data, (bytes)).length, 0);
+                found = true;
+            }
+        }
+        assertTrue(found);
     }
 
     function test_feeOnTransferToken_cannotPassTheMinimum() public {

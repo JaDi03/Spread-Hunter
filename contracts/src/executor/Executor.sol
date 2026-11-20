@@ -40,6 +40,7 @@ contract Executor is AbstractCallback, IUnlockCallback {
     error LegPaused();
     error LegReused();
     error ZeroAmount();
+    error ZeroMinimum();
     error OutputBelowMinimum(uint256 amountOut, uint256 minAmountOut);
 
     event LegExecuted(bytes32 indexed legId, bool buyToken, uint256 paid, uint256 received);
@@ -132,7 +133,7 @@ contract Executor is AbstractCallback, IUnlockCallback {
         uint160 sqrtPriceLimitX96,
         uint256 deadline
     ) external onlyServiceProvider onlyCallbackSender(rvmId) {
-        bytes memory reason = _precheck(legId, amountIn, deadline);
+        bytes memory reason = _precheck(legId, amountIn, minAmountOut, deadline);
         bool executed = false;
         if (reason.length == 0) {
             legUsed[legId] = true;
@@ -231,12 +232,18 @@ contract Executor is AbstractCallback, IUnlockCallback {
         _coverDebt();
     }
 
-    function _precheck(bytes32 legId, uint256 amountIn, uint256 deadline) internal view returns (bytes memory) {
+    function _precheck(bytes32 legId, uint256 amountIn, uint256 minAmountOut, uint256 deadline)
+        internal
+        view
+        returns (bytes memory)
+    {
         if (legUsed[legId]) return abi.encodeWithSelector(LegReused.selector);
         if (paused) return abi.encodeWithSelector(LegPaused.selector);
         // forge-lint: disable-next-line(block-timestamp)
         if (block.timestamp > deadline) return abi.encodeWithSelector(LegExpired.selector);
         if (amountIn == 0) return abi.encodeWithSelector(ZeroAmount.selector);
+        // a leg with no minimum output would accept any price
+        if (minAmountOut == 0) return abi.encodeWithSelector(ZeroMinimum.selector);
         return "";
     }
 

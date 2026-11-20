@@ -44,6 +44,7 @@ contract SpreadHunterReactive is AbstractReactive {
         uint256 usdc;
         uint256 token;
         uint256 inventoryAt;
+        uint256 priceAt;
     }
 
     struct Flight {
@@ -71,7 +72,7 @@ contract SpreadHunterReactive is AbstractReactive {
     uint8 internal constant MAX_FAILURES_IN_A_ROW = 3;
     uint32 internal constant MIN_LEG_TIMEOUT = 5;
     uint32 internal constant MAX_LEG_TIMEOUT = 600;
-    uint64 internal constant MIN_CALLBACK_GAS = 250_000;
+    uint64 internal constant MIN_CALLBACK_GAS = 300_000;
     uint64 internal constant MAX_CALLBACK_GAS = 900_000;
     /// Clock slack between Reactive Network and the destination chains before a lost leg stops blocking.
     uint64 internal constant UNLOCK_MARGIN = 60;
@@ -201,13 +202,16 @@ contract SpreadHunterReactive is AbstractReactive {
             log_.contractAddress == _pools[side].poolManager && log_.topic0 == SWAP_TOPIC0
                 && bytes32(log_.topic1) == _pools[side].poolId
         ) {
+            Side storage s = _sides[side];
+            // a swap delivered late, behind a newer one, is stale: it neither moves the price nor starts a trade
+            if (s.priced && at <= s.priceAt) return;
             (,, uint160 sqrtPriceX96, uint128 liquidity,, uint24 fee) =
                 abi.decode(log_.data, (int128, int128, uint160, uint128, int24, uint24));
-            Side storage s = _sides[side];
             s.sqrtPriceX96 = sqrtPriceX96;
             s.liquidity = liquidity;
             s.fee = fee;
             s.priced = true;
+            s.priceAt = at;
             // our own legs move the price but never start a trade
             trigger = log_.topic2 != uint256(uint160(executors[side]));
         } else if (executors[side] != address(0) && log_.contractAddress == executors[side]) {
@@ -252,7 +256,7 @@ contract SpreadHunterReactive is AbstractReactive {
             return;
         }
         cooldownUntil = block.timestamp + FAILURE_COOLDOWN;
-        if (++failuresInARow >= MAX_FAILURES_IN_A_ROW && !paused) {
+        if (++failuresInARow >= MAX_FAILURES_IN_A_ROW) {
             paused = true;
             emit AutoPaused(failuresInARow);
         }

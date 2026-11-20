@@ -172,7 +172,7 @@ abstract contract SpreadHunterReactiveTestBase is Test {
         vm.expectRevert(SpreadHunterReactive.BadParams.selector);
         rc.setParams(p);
         p = _params();
-        p.callbackGas = 249_999;
+        p.callbackGas = 299_999;
         vm.expectRevert(SpreadHunterReactive.BadParams.selector);
         rc.setParams(p);
         p = _params();
@@ -476,6 +476,92 @@ abstract contract SpreadHunterReactiveTestBase is Test {
         vm.expectRevert(SpreadHunterReactive.NotOwner.selector);
         rc.withdraw(1);
         vm.stopPrank();
+    }
+
+    function test_staleSwap_neitherMovesThePriceNorTrades() public {
+        _ready();
+        SpreadHunterReactive.Side memory before = rc.sideState(1);
+        IReactive.LogRecord memory l =
+            _swapLog(CHAIN_B, keyB, stranger, uint160(uint256(before.sqrtPriceX96) * 105 / 100), before.liquidity);
+        l.blockNumber = 0;
+        l.logIndex = 0;
+        _react(l);
+        assertEq(rc.sideState(1).sqrtPriceX96, before.sqrtPriceX96);
+        assertEq(sys.requestCount(), 0);
+    }
+
+    function test_inventoryAtTheSamePosition_isIgnored() public {
+        _ready();
+        SpreadHunterReactive.Side memory before = rc.sideState(0);
+        IReactive.LogRecord memory l;
+        l.chainId = CHAIN_A;
+        l.contractAddress = address(exA);
+        l.topic0 = uint256(keccak256("Inventory(uint256,uint256)"));
+        l.data = abi.encode(uint256(1), uint256(1));
+        l.blockNumber = before.inventoryAt >> 64;
+        l.logIndex = uint64(before.inventoryAt);
+        _react(l);
+        assertEq(rc.sideState(0).usdc, before.usdc);
+    }
+
+    function test_lock_needsInventoryFromBothSides() public {
+        _ready();
+        vm.recordLogs();
+        _swap(keyB, true, 20e6);
+        _feedRecorded();
+        for (uint256 i; i < 2; ++i) {
+            vm.recordLogs();
+            _relay(relayed++);
+            _feedRecordedExcept(uint256(keccak256("Inventory(uint256,uint256)")));
+        }
+        vm.recordLogs();
+        vm.prank(owner);
+        exA.sync();
+        _feedRecorded();
+        assertTrue(rc.flight().active);
+    }
+
+    function test_tradeSize_isCutToTheUsdcOnTheCheapSide() public {
+        _ready();
+        vm.prank(owner);
+        exA.withdraw(Currency.wrap(address(usdc)), INV_USDC - 1e6);
+        vm.recordLogs();
+        _syncBoth();
+        vm.recordLogs();
+        _swap(keyB, true, 20e6);
+        _feedRecorded();
+        (,,, uint256 amountIn,,,) = _decodeLeg(sys.request(0).payload);
+        assertLe(amountIn, 1e6);
+    }
+
+    function test_autoPause_isAnnouncedEvenWhenAlreadyPaused() public {
+        _ready();
+        _pauseExecutors();
+        uint256 clock = vm.getBlockTimestamp();
+        for (uint256 i; i < 2; ++i) {
+            clock += 61;
+            vm.warp(clock);
+            vm.recordLogs();
+            _swap(keyB, true, 5e6);
+            _feedRecorded();
+            _relayAll();
+        }
+        clock += 61;
+        vm.warp(clock);
+        vm.recordLogs();
+        _swap(keyB, true, 5e6);
+        _feedRecorded();
+        vm.prank(owner);
+        rc.setPaused(true);
+        _relayAll();
+        // events the reactive contract emitted while the last results were delivered
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+        bool announced;
+        for (uint256 i; i < logs.length; ++i) {
+            if (logs[i].emitter == address(rc) && logs[i].topics[0] == AutoPaused.selector) announced = true;
+        }
+        assertTrue(announced);
+        assertEq(rc.failuresInARow(), 3);
     }
 
     function test_olderInventory_isIgnored() public {
