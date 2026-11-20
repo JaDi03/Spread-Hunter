@@ -84,6 +84,14 @@ contract ArbMathTest is Test {
         assertEq(up, uint256(p) * 2);
     }
 
+    function test_sqrtPriceAfter_appliesTheFee() public pure {
+        uint160 p = uint160(1e7 << 96);
+        // 0.05% fee: only 99.95% of the input moves the price
+        uint256 withFee = ArbMath.sqrtPriceAfter(p, 400e6, true, FEE, 400e6);
+        assertEq(withFee, uint256(p) * 400e6 / (400e6 + 399.8e6));
+        assertGt(withFee, ArbMath.sqrtPriceAfter(p, 400e6, true, 0, 400e6));
+    }
+
     function _profit(uint256 usdcA, uint256 tokenA, uint256 usdcB, uint256 tokenB, uint256 dIn)
         internal
         pure
