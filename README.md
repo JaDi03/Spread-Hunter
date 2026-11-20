@@ -113,6 +113,18 @@ If you cloned without `--recurse-submodules`, run `git submodule update --init -
 
 The tests run the Executor against Uniswap's real PoolManager, compiled locally, and run the whole loop with two pools, two Executors and the reactive contract.
 
+## Live dashboard
+
+`web/` is a page that reads both pools and the reactive contract straight from the public RPCs, with no backend: the HUNT price on each chain, the spread against the two pool fees, each side's inventory as the reactive contract last saw it, and a map of the cycle. New swaps and trades show up on the map while the page is open; when none is happening, it replays the cycle above with its real transactions, and says so. It needs [Node](https://nodejs.org/) 24 and [pnpm](https://pnpm.io/installation):
+
+```bash
+cd web
+pnpm install
+pnpm dev
+```
+
+Addresses and RPC URLs live in `web/src/config/testnet.ts`.
+
 ## Deploy a pair
 
 The pair, its pools, the trading parameters, the inventory and the funding all live in one file, [`contracts/script/config/DemoPair.sol`](contracts/script/config/DemoPair.sol); network addresses (USDC, PoolManager, callback proxies) live in [`contracts/script/config/Testnet.sol`](contracts/script/config/Testnet.sol). The values in the repo are the demo pair above. To run your own pair, point `DemoPair.sol` at a token that has a hookless, fixed-fee Uniswap V4 pool against USDC with liquidity on both chains, and set your own amounts. This repo does not create tokens or pools: the pair has to exist already.
@@ -202,6 +214,10 @@ contracts/
 ├── script/           deploy scripts; config/ holds network addresses and the pair
 ├── test/             unit, fuzz and full-loop tests; halmos/ holds symbolic properties
 └── lib/              dependencies as git submodules
+web/
+├── src/chain/        reads the pools and the reactive contract (viem)
+├── src/components/   price panel, cycle map, event tape, chart, inventory
+└── src/config/       network addresses and RPC URLs
 ```
 
 ## Tech stack
@@ -210,6 +226,7 @@ contracts/
 - **[Uniswap V4](https://github.com/Uniswap/v4-core)**: the pools the Executors trade on ([v4-periphery](https://github.com/Uniswap/v4-periphery) as a submodule).
 - **[Foundry](https://www.getfoundry.sh/)**: build, tests and deploy scripts.
 - **[OpenZeppelin Contracts](https://github.com/OpenZeppelin/openzeppelin-contracts)**: safe token transfers and math.
+- **[Vite](https://vite.dev/), [React](https://react.dev/) and [viem](https://viem.sh/)**: the live dashboard.
 - **[Circle USDC](https://developers.circle.com/stablecoins/usdc-contract-addresses)**: the quote token on both chains.
 
 ## License
