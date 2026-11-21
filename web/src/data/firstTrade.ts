@@ -1,6 +1,6 @@
 import type { TradeTimeline } from '../chain/latency.ts'
 
-// The first live cycle, 2026-11-19, as published in the README: block times and amounts read from the three chains
+// The first live cycle, 2026-11-20 UTC, as published in the README: block times and amounts read from the three chains
 export const FIRST_TRADE: TradeTimeline = {
   nonce: 1n,
   cheapSide: 0,

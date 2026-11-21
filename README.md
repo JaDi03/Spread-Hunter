@@ -10,7 +10,7 @@ Prices of the same pair drift apart across chains all the time: someone makes a 
 
 ## See it working
 
-This cycle ran on testnet on 2026-11-19, against two USDC/HUNT pools (HUNT is a test token: testnets have no pools with real liquidity). Every value below is read from the chain.
+This cycle ran on testnet on 2026-11-20 (UTC), against two USDC/HUNT pools (HUNT is a test token: testnets have no pools with real liquidity). Every value below is read from the chain.
 
 | Step | Chain | Time after the swap | Transaction |
 |---|---|---|---|
