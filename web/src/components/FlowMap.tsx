@@ -194,12 +194,6 @@ export function FlowMap({ feed, replay, reducedMotion, visible }: Props) {
         </span>
       </div>
       <svg className="flow-svg" viewBox={`0 0 ${l.w} ${l.h}`} role="img" aria-label="Map of one arbitrage cycle across Base, Reactive Lasna and Unichain">
-        <defs>
-          <radialGradient id="glow">
-            <stop offset="0" stopColor="#fff" stopOpacity="0.9" />
-            <stop offset="1" stopColor="#fff" stopOpacity="0" />
-          </radialGradient>
-        </defs>
         {(Object.keys(EDGES) as Edge[]).map((e) => (
           <path key={e} d={pathD(l, e)} className="edge" stroke={EDGES[e].color} />
         ))}
@@ -220,7 +214,6 @@ export function FlowMap({ feed, replay, reducedMotion, visible }: Props) {
               {trail.map((q, i) => (
                 <circle key={i} cx={q.x} cy={q.y} r={4 - i} fill={EDGES[p.edge].color} opacity={0.5 - i * 0.15} />
               ))}
-              <circle cx={pt.x} cy={pt.y} r={14} fill="url(#glow)" opacity={0.35} />
               <circle cx={pt.x} cy={pt.y} r={5.5} fill={EDGES[p.edge].color} />
               <text x={pt.x + 12} y={pt.y - 10} className="plabel">{p.label}</text>
             </g>
