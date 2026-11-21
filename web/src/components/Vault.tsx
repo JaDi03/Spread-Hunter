@@ -10,10 +10,10 @@ export function Vault({ feed }: { feed: FeedState }) {
   const st = r ? rcState(r, now) : null
 
   return (
-    <section className="vault" aria-label="Inventory and reactive contract state">
+    <section className="vault" aria-label="Trading balances and reactive contract state">
       <div className="vault-head">
-        <span>INVENTORY</span>
-        <span className="tape-sub">as the reactive contract last saw it</span>
+        <span>TRADING BALANCES</span>
+        <span className="tape-sub">USDC and HUNT each Executor trades from, as the reactive contract last saw it</span>
       </div>
       {SIDES.map((s) => {
         const seen = r?.sides[s.side]

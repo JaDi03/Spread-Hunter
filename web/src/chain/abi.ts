@@ -7,6 +7,7 @@ export const reactiveAbi = parseAbi([
   'function sideState(uint256 side) view returns (Side)',
   'function flight() view returns (Flight)',
   'function pool(uint256 side) view returns (Pool)',
+  'function params() view returns (uint256 minProfitUsdc, uint256 maxTradeUsdc, uint16 slippageBps, uint32 legTimeout, uint64 callbackGas)',
   'function paused() view returns (bool)',
   'function nonce() view returns (uint256)',
   'function failuresInARow() view returns (uint8)',

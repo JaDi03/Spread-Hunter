@@ -2,6 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useFeed } from './chain/useFeed'
 import { FlowMap } from './components/FlowMap'
 import { HexRain } from './components/HexRain'
+import { LatencyPanel } from './components/LatencyPanel'
 import { PriceDuel } from './components/PriceDuel'
 import { SpreadChart } from './components/SpreadChart'
 import { StatusBar } from './components/StatusBar'
@@ -51,6 +52,8 @@ export default function App() {
         </div>
         <Tape feed={feed} />
       </section>
+
+      <LatencyPanel />
 
       <section className="lower">
         <SpreadChart feed={feed} />
