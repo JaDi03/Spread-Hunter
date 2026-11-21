@@ -608,6 +608,134 @@ button:focus-visible {
   color: var(--bad);
 }
 
+/* measured latency */
+.latency {
+  margin-top: 16px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding-bottom: 14px;
+}
+.lat-head {
+  padding: 14px 16px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+.lat-figs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.lat-fig {
+  padding: 16px;
+}
+.lat-fig + .lat-fig {
+  border-left: 1px solid var(--line);
+}
+.lat-num {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(40px, 6vw, 72px);
+  line-height: 1;
+  color: var(--lasna);
+  letter-spacing: -0.04em;
+}
+.lat-label {
+  margin-top: 8px;
+  font-size: 13px;
+}
+.lat-sub {
+  font-size: 11px;
+  color: var(--muted);
+}
+.lat-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0 16px;
+}
+.lat-rows li {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.lat-row-head {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+}
+.lat-row-head .ok {
+  color: var(--lasna);
+}
+.lat-row-head .warn {
+  color: var(--warn);
+}
+.lat-row-head .bad {
+  color: var(--bad);
+}
+.ruler {
+  position: relative;
+  height: 34px;
+  margin: 14px 18px 8px 4px;
+  border-bottom: 1px solid var(--line-2);
+}
+.tick {
+  position: absolute;
+  bottom: -18px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 10px;
+  color: var(--muted);
+}
+.mark {
+  position: absolute;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 12px currentColor;
+}
+.mark-base {
+  background: var(--base);
+  color: var(--base);
+}
+.mark-unichain {
+  background: var(--uni);
+  color: var(--uni);
+}
+.mark-lasna {
+  background: var(--lasna);
+  color: var(--lasna);
+}
+.lat-legs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px 16px;
+  margin: 26px 0 0;
+}
+.lat-legs dt {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.lat-legs dd {
+  margin: 2px 0 0;
+  font-size: 13px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  align-items: baseline;
+}
+.lat-note {
+  margin: 12px 16px 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
 /* lower: chart and vault */
 .lower {
   display: grid;
@@ -893,6 +1021,14 @@ button:focus-visible {
   }
   .how ol {
     grid-template-columns: 1fr;
+  }
+  .lat-figs,
+  .lat-legs {
+    grid-template-columns: 1fr;
+  }
+  .lat-fig + .lat-fig {
+    border-left: 0;
+    border-top: 1px solid var(--line);
   }
 }
 

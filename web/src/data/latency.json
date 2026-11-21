@@ -1,0 +1,83 @@
+{
+  "measuredAt": "2026-11-21T00:15:53.564Z",
+  "reactiveContract": "0xA07fcfCbE127D14668Ffb93f41aFF270b151777F",
+  "lasnaBlocks": [
+    "8772026",
+    "8851211"
+  ],
+  "resolution": "differences of whole-second block timestamps, +-1 s. Lasna times are only compared with Lasna times; originToRequestCrossClock subtracts two chains' clocks",
+  "trades": 1,
+  "failed": 0,
+  "inFlight": 0,
+  "summary": {
+    "swapToBothLegs": {
+      "n": 1,
+      "min": 2,
+      "median": 2,
+      "mean": 2,
+      "max": 2
+    },
+    "requestToClosedOnLasna": {
+      "n": 1,
+      "min": 2,
+      "median": 2,
+      "mean": 2,
+      "max": 2
+    }
+  },
+  "timelines": [
+    {
+      "nonce": "1",
+      "cheapSide": 0,
+      "origin": {
+        "chain": "unichain",
+        "tx": "0xfa6cb57de334921d50bdda7c10e190376cf6600bf4a31c59368f08250a4e97b2",
+        "block": "68284474",
+        "ts": 1795136902
+      },
+      "requested": {
+        "chain": "lasna",
+        "tx": "0x5930979bf0d29c8ed07262be278df1ac77122f2ce9d3fb8b83ed4b907f21c64a",
+        "block": "8772837",
+        "ts": 1795136901
+      },
+      "legs": [
+        {
+          "chain": "base",
+          "tx": "0xd87c7be443e98af70aac8cf0ece0094f8ebb6ac0b76f3c4dc89b6d64c7def20c",
+          "block": "61075173",
+          "ts": 1795136903,
+          "ok": true
+        },
+        {
+          "chain": "unichain",
+          "tx": "0xa7a13b48f516ab4e313f07356897ed106c9ad1f216686265f2093ac27f17933e",
+          "block": "68284476",
+          "ts": 1795136904,
+          "ok": true
+        }
+      ],
+      "closed": {
+        "chain": "lasna",
+        "tx": "0x3818254dd4177f02df964a124a0c17413b4df00b6d0f9e05ac6d3dc183a1bcd5",
+        "block": "8772839",
+        "ts": 1795136903,
+        "timedOut": false,
+        "legFailed": false
+      },
+      "pending": false,
+      "latency": {
+        "nonce": "1",
+        "originToRequestCrossClock": -1,
+        "originToLeg": [
+          1,
+          2
+        ],
+        "originToLegsDone": 2,
+        "requestToClosed": 2,
+        "ok": true,
+        "pending": false
+      }
+    }
+  ]
+}

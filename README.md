@@ -125,6 +125,8 @@ pnpm dev
 
 Addresses and RPC URLs live in `web/src/config/testnet.ts`.
 
+To measure the latency of every trade the reactive contract has made, from the swap that started it to both legs, run `pnpm latency` in `web/`. It reads the three chains, prints one row per trade with a summary, and writes `web/src/data/latency.json`, which the dashboard shows. Times are differences of whole-second block timestamps, so each one is accurate to about a second. Lasna's block clock can read behind Base and Unichain (in the first trade, Lasna stamped its request a second before the swap that caused it), so Lasna times are only compared with other Lasna times.
+
 ## Deploy a pair
 
 The pair, its pools, the trading parameters, the inventory and the funding all live in one file, [`contracts/script/config/DemoPair.sol`](contracts/script/config/DemoPair.sol); network addresses (USDC, PoolManager, callback proxies) live in [`contracts/script/config/Testnet.sol`](contracts/script/config/Testnet.sol). The values in the repo are the demo pair above. To run your own pair, point `DemoPair.sol` at a token that has a hookless, fixed-fee Uniswap V4 pool against USDC with liquidity on both chains, and set your own amounts. This repo does not create tokens or pools: the pair has to exist already.

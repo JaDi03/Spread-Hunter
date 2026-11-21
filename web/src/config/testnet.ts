@@ -54,6 +54,8 @@ export const CHAINS: Record<ChainKey, ChainConfig> = {
 }
 
 export const REACTIVE_CONTRACT = '0xA07fcfCbE127D14668Ffb93f41aFF270b151777F' as const
+/** Lasna block of the reactive contract's deployment: no trade can be older */
+export const REACTIVE_DEPLOY_BLOCK = 8772026n
 
 export interface SideConfig {
   side: 0 | 1
