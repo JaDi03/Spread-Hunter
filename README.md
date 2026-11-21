@@ -10,6 +10,8 @@ Prices of the same pair drift apart across chains all the time: someone makes a 
 
 ## See it working
 
+The live dashboard is at [spread-hunter.vercel.app](https://spread-hunter.vercel.app/): it reads both pools and the reactive contract from the chains while you watch, and replays the newest trade when none is happening.
+
 This cycle ran on testnet on 2026-11-20 (UTC), against two USDC/HUNT pools (HUNT is a test token: testnets have no pools with real liquidity). Every value below is read from the chain.
 
 | Step | Chain | Time after the swap | Transaction |
@@ -115,7 +117,7 @@ The tests run the Executor against Uniswap's real PoolManager, compiled locally,
 
 ## Live dashboard
 
-`web/` is a page that reads both pools and the reactive contract straight from the public RPCs, with no backend: the HUNT price on each chain, the spread against the two pool fees, each side's inventory as the reactive contract last saw it, and a map of the cycle. New swaps and trades show up on the map while the page is open; when none is happening, it replays the newest trade with its real transactions, and says so. It needs [Node](https://nodejs.org/) 24 and [pnpm](https://pnpm.io/installation):
+`web/` is the page published at [spread-hunter.vercel.app](https://spread-hunter.vercel.app/). It reads both pools and the reactive contract straight from the public RPCs, with no backend: the HUNT price on each chain, the spread against the two pool fees, each side's inventory as the reactive contract last saw it, and a map of the cycle. New swaps and trades show up on the map while the page is open; when none is happening, it replays the newest trade with its real transactions, and says so. To run it locally you need [Node](https://nodejs.org/) 24 and [pnpm](https://pnpm.io/installation):
 
 ```bash
 cd web
