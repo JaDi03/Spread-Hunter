@@ -129,7 +129,7 @@ To measure the latency of every trade the reactive contract has made, from the s
 
 `pnpm swaps` in `web/` reads every swap of both pools since the reactive contract went live and writes the price after each one to `web/src/data/swaps.json`, which feeds the spread chart. Later runs only read the new blocks.
 
-To put the dashboard online, import the repo in [Vercel](https://vercel.com/docs/monorepos), set the Root Directory to `web` and add the environment variable `ENABLE_EXPERIMENTAL_COREPACK=1`, so the build uses the pnpm version pinned in `web/package.json` ([Vercel docs](https://vercel.com/docs/builds/configure-a-build)). The security headers come from `web/vercel.json`.
+To put the dashboard online, import the repo in [Vercel](https://vercel.com/docs/monorepos) and set the Root Directory to `web`. `web/vercel.json` holds the install and build commands, which pin pnpm 11.2.2, and the security headers.
 
 ## Deploy a pair
 
