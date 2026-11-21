@@ -736,6 +736,23 @@ button:focus-visible {
   color: var(--muted);
 }
 
+/* results: same frame as the latency panel, with longer numbers */
+.res-num {
+  font-size: clamp(30px, 4.4vw, 52px);
+  overflow-wrap: anywhere;
+}
+.res-num small {
+  font-size: 0.4em;
+  letter-spacing: 0.04em;
+}
+.res-drift {
+  color: var(--text);
+}
+.res-sides {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 16px 16px 0;
+}
+
 /* lower: chart and vault */
 .lower {
   display: grid;
@@ -784,6 +801,35 @@ button:focus-visible {
   width: 100%;
   height: auto;
   display: block;
+}
+.chart-ranges {
+  display: flex;
+  gap: 4px;
+}
+.chart-ranges button {
+  font: inherit;
+  font-family: var(--mono);
+  min-width: 44px;
+  min-height: 32px;
+  padding: 0 8px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line-2);
+  cursor: pointer;
+}
+.chart-ranges button[aria-pressed='true'] {
+  color: var(--ink);
+  background: var(--lasna);
+  border-color: var(--lasna);
+}
+.chart-ranges button:focus-visible {
+  outline: 2px solid var(--lasna);
+  outline-offset: 2px;
+}
+.chart-note {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--muted);
 }
 .grid {
   stroke: var(--line);

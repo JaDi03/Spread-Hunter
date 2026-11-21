@@ -4,6 +4,7 @@ import { writeFileSync } from 'node:fs'
 import { createClient, http } from 'viem'
 import { getBlockNumber } from 'viem/actions'
 import { latencyOf, stats, traceTrades, type Clients, type TradeTimeline } from '../src/chain/latency.ts'
+import { resultsOf } from '../src/chain/results.ts'
 import { CHAINS, REACTIVE_CONTRACT, REACTIVE_DEPLOY_BLOCK } from '../src/config/testnet.ts'
 
 const out = process.argv[2] ?? 'src/data/latency.json'
@@ -27,6 +28,8 @@ for (const { l } of rows) {
 const done = rows.filter((r) => r.l.ok && r.l.originToLegsDone !== null).map((r) => r.l.originToLegsDone as number)
 const closed = rows.filter((r) => r.l.ok && r.l.requestToClosed !== null).map((r) => r.l.requestToClosed as number)
 const summary = { swapToBothLegs: stats(done), requestToClosedOnLasna: stats(closed) }
+const results = resultsOf(trades)
+console.log('realized:', results.realizedUsdc.toString(), 'USDC units from', results.complete, 'complete trades; one leg only:', results.oneLeg)
 console.log("\n* subtracts two chains' clocks, so it can come out negative")
 console.log('swap -> both legs executed:', summary.swapToBothLegs ?? 'no complete trade yet')
 console.log('request -> reactive contract knows the result (Lasna clock):', summary.requestToClosedOnLasna ?? 'no complete trade yet')
@@ -41,6 +44,8 @@ const json = {
   failed: rows.filter((r) => !r.l.ok && !r.l.pending).length,
   inFlight: rows.filter((r) => r.l.pending).length,
   summary,
+  // every executed leg since the deployment, not only the bundled timelines
+  results: toJson(results),
   // newest first
   timelines: rows
     .slice(-KEEP_TIMELINES)
@@ -50,6 +55,10 @@ const json = {
 writeFileSync(out, `${JSON.stringify(json, null, 2)}\n`)
 console.log(`\nwrote ${out}`)
 
+function toJson(v: unknown) {
+  return JSON.parse(JSON.stringify(v, (_k, x: unknown) => (typeof x === 'bigint' ? x.toString() : x))) as Record<string, unknown>
+}
+
 function serialize(t: TradeTimeline) {
-  return JSON.parse(JSON.stringify(t, (_k, v: unknown) => (typeof v === 'bigint' ? v.toString() : v))) as Record<string, unknown>
+  return toJson(t)
 }

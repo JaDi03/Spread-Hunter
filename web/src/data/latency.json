@@ -1,31 +1,592 @@
 {
-  "measuredAt": "2026-11-21T00:15:53.564Z",
+  "measuredAt": "2026-11-21T06:55:56.098Z",
   "reactiveContract": "0xA07fcfCbE127D14668Ffb93f41aFF270b151777F",
   "lasnaBlocks": [
     "8772026",
-    "8851211"
+    "8873841"
   ],
   "resolution": "differences of whole-second block timestamps, +-1 s. Lasna times are only compared with Lasna times; originToRequestCrossClock subtracts two chains' clocks",
-  "trades": 1,
+  "trades": 9,
   "failed": 0,
   "inFlight": 0,
   "summary": {
     "swapToBothLegs": {
-      "n": 1,
+      "n": 9,
       "min": 2,
       "median": 2,
-      "mean": 2,
-      "max": 2
+      "mean": 2.2222222222222223,
+      "max": 3
     },
     "requestToClosedOnLasna": {
-      "n": 1,
+      "n": 9,
       "min": 2,
       "median": 2,
       "mean": 2,
       "max": 2
     }
   },
+  "results": {
+    "trades": 9,
+    "complete": 9,
+    "oneLeg": 0,
+    "realizedUsdc": "951323",
+    "tokenDrift": "-838350937634546",
+    "sides": [
+      {
+        "usdc": "-9016933",
+        "token": "929501829221448847791"
+      },
+      {
+        "usdc": "9968256",
+        "token": "-929502667572386482337"
+      }
+    ]
+  },
   "timelines": [
+    {
+      "nonce": "9",
+      "cheapSide": 0,
+      "origin": {
+        "chain": "unichain",
+        "tx": "0x7a3a0cc7133337452afd7855df599df8c89857b3e9dcd849883e8e91b67f1e4c",
+        "block": "68390591",
+        "ts": 1795243019,
+        "swap": {
+          "buyToken": true,
+          "usdc": "8650000",
+          "token": "863117716423482628590"
+        }
+      },
+      "requested": {
+        "chain": "lasna",
+        "tx": "0x6a7e945aa1b2f47e867c455054fb58a45c85e2d94c4d70eb31cb84807a2ffd2e",
+        "block": "8872783",
+        "ts": 1795243019
+      },
+      "legs": [
+        {
+          "chain": "base",
+          "tx": "0x520560593c168ec6a49cee7db0942702e0ccbb0ad1e76bf5a94baab24e100b28",
+          "block": "61605761",
+          "ts": 1795243021,
+          "ok": true,
+          "fill": {
+            "buyToken": true,
+            "paid": "4082195",
+            "received": "411569171406865541458"
+          }
+        },
+        {
+          "chain": "unichain",
+          "tx": "0xb6773581ae4930839b614c534346fa75e31c78c8b83ad80590b0b881fc5e7838",
+          "block": "68390593",
+          "ts": 1795243021,
+          "ok": true,
+          "fill": {
+            "buyToken": false,
+            "paid": "411569327412686326962",
+            "received": "4167141"
+          }
+        }
+      ],
+      "closed": {
+        "chain": "lasna",
+        "tx": "0xe04b26b86a815d8e47a6e0954986af5613ef785f809b1fc4e152630d75dc5ac5",
+        "block": "8872785",
+        "ts": 1795243021,
+        "timedOut": false,
+        "legFailed": false
+      },
+      "pending": false,
+      "latency": {
+        "nonce": "9",
+        "originToRequestCrossClock": 0,
+        "originToLeg": [
+          2,
+          2
+        ],
+        "originToLegsDone": 2,
+        "requestToClosed": 2,
+        "ok": true,
+        "pending": false
+      }
+    },
+    {
+      "nonce": "8",
+      "cheapSide": 1,
+      "origin": {
+        "chain": "base",
+        "tx": "0x6d686860e7ea6715c94c3170a67b3be8f3b8323296bbf123f413a9941d9bec3b",
+        "block": "61593136",
+        "ts": 1795240496,
+        "swap": {
+          "buyToken": true,
+          "usdc": "3720000",
+          "token": "379287073180919502322"
+        }
+      },
+      "requested": {
+        "chain": "lasna",
+        "tx": "0xa013eb177d459a1aca6a3bc364715431f7fb8ac4ecf744328a6aaf2817b27b36",
+        "block": "8870417",
+        "ts": 1795240495
+      },
+      "legs": [
+        {
+          "chain": "base",
+          "tx": "0x2eaa9ee619f9b4925abfc4c176c11db859b9d747e9f248666578f24b6835ab5f",
+          "block": "61593143",
+          "ts": 1795240497,
+          "ok": true,
+          "fill": {
+            "buyToken": false,
+            "paid": "169438051521424706870",
+            "received": "1668795"
+          }
+        },
+        {
+          "chain": "unichain",
+          "tx": "0x041b341bdd5eb819d4bebb3afe01209e133992d80f25658445a32084e89b7d51",
+          "block": "68388070",
+          "ts": 1795240498,
+          "ok": true,
+          "fill": {
+            "buyToken": true,
+            "paid": "1654857",
+            "received": "169437993194258889932"
+          }
+        }
+      ],
+      "closed": {
+        "chain": "lasna",
+        "tx": "0x80a3506bff3e4fb9da6acf18eee33ca35e5652fba561e237bcdfc5abaa91cb25",
+        "block": "8870419",
+        "ts": 1795240497,
+        "timedOut": false,
+        "legFailed": false
+      },
+      "pending": false,
+      "latency": {
+        "nonce": "8",
+        "originToRequestCrossClock": -1,
+        "originToLeg": [
+          1,
+          2
+        ],
+        "originToLegsDone": 2,
+        "requestToClosed": 2,
+        "ok": true,
+        "pending": false
+      }
+    },
+    {
+      "nonce": "7",
+      "cheapSide": 0,
+      "origin": {
+        "chain": "base",
+        "tx": "0xd20b88aa15f09928e44664354b25abe70d2818bd18e53291eac7d4103c88d476",
+        "block": "61574709",
+        "ts": 1795236810,
+        "swap": {
+          "buyToken": false,
+          "usdc": "8011430",
+          "token": "825281582000000000000"
+        }
+      },
+      "requested": {
+        "chain": "lasna",
+        "tx": "0xf3dfe40bee5ee26919c2993811bf169bce313e4e0c333da0f1b2ddce2d781260",
+        "block": "8866926",
+        "ts": 1795236810
+      },
+      "legs": [
+        {
+          "chain": "base",
+          "tx": "0x47ccdf8f8ee84fe35bbaa7cbc07cd8fa195852437cf5de4e124ef02f97d3f983",
+          "block": "61574718",
+          "ts": 1795236812,
+          "ok": true,
+          "fill": {
+            "buyToken": true,
+            "paid": "3966998",
+            "received": "412434520454470180134"
+          }
+        },
+        {
+          "chain": "unichain",
+          "tx": "0xe14b2f3f5dfa5d101ca286a7ac0fec455987d53ecf9600f7390d1e7c80cfdd25",
+          "block": "68384385",
+          "ts": 1795236813,
+          "ok": true,
+          "fill": {
+            "buyToken": false,
+            "paid": "412434572660837130464",
+            "received": "4048441"
+          }
+        }
+      ],
+      "closed": {
+        "chain": "lasna",
+        "tx": "0xe117c74893faa82f769f8201ed97beb1a01f8a785738982f64cc8164207b980d",
+        "block": "8866928",
+        "ts": 1795236812,
+        "timedOut": false,
+        "legFailed": false
+      },
+      "pending": false,
+      "latency": {
+        "nonce": "7",
+        "originToRequestCrossClock": 0,
+        "originToLeg": [
+          2,
+          3
+        ],
+        "originToLegsDone": 3,
+        "requestToClosed": 2,
+        "ok": true,
+        "pending": false
+      }
+    },
+    {
+      "nonce": "6",
+      "cheapSide": 0,
+      "origin": {
+        "chain": "unichain",
+        "tx": "0x45aa3360b4eeb19f744101d3a4f1b123ba1ec9704edb423beb566c056770117f",
+        "block": "68380361",
+        "ts": 1795232789,
+        "swap": {
+          "buyToken": true,
+          "usdc": "4150000",
+          "token": "418054970328209286396"
+        }
+      },
+      "requested": {
+        "chain": "lasna",
+        "tx": "0xf95a63f3f6a5acf3b6e18c74c0df3c7395c58255f1499a348eaeab6a96a9555a",
+        "block": "8863133",
+        "ts": 1795232788
+      },
+      "legs": [
+        {
+          "chain": "base",
+          "tx": "0xdf353358e966beecc0a57472cc98380fc433623aa76d05986bc243c4bb68b14e",
+          "block": "61554608",
+          "ts": 1795232790,
+          "ok": true,
+          "fill": {
+            "buyToken": true,
+            "paid": "2063167",
+            "received": "209131933882772454040"
+          }
+        },
+        {
+          "chain": "unichain",
+          "tx": "0x1b076c031ab0325ce146bbcb6cd394ce1f250b2c888a65c152cc166e3ef8d4cf",
+          "block": "68380363",
+          "ts": 1795232791,
+          "ok": true,
+          "fill": {
+            "buyToken": false,
+            "paid": "209132124150672474797",
+            "received": "2084757"
+          }
+        }
+      ],
+      "closed": {
+        "chain": "lasna",
+        "tx": "0xba9e4557f79d9b94ee73d554b960632daa9c1c8fc7f87d096850c549e277ec32",
+        "block": "8863135",
+        "ts": 1795232790,
+        "timedOut": false,
+        "legFailed": false
+      },
+      "pending": false,
+      "latency": {
+        "nonce": "6",
+        "originToRequestCrossClock": -1,
+        "originToLeg": [
+          1,
+          2
+        ],
+        "originToLegsDone": 2,
+        "requestToClosed": 2,
+        "ok": true,
+        "pending": false
+      }
+    },
+    {
+      "nonce": "5",
+      "cheapSide": 0,
+      "origin": {
+        "chain": "base",
+        "tx": "0x42df565c4b6ffe51f05f40b337876a42dbad1fe08327dfddd811c50e78d895f6",
+        "block": "61544359",
+        "ts": 1795230740,
+        "swap": {
+          "buyToken": false,
+          "usdc": "5947079",
+          "token": "605931612000000000000"
+        }
+      },
+      "requested": {
+        "chain": "lasna",
+        "tx": "0xc5d2c1740481570128557639af81482b2aa5ca1be3764855e2b019f7dceb0a13",
+        "block": "8861192",
+        "ts": 1795230740
+      },
+      "legs": [
+        {
+          "chain": "base",
+          "tx": "0xc9988f768bbfe6a64435dcd59a13526088868d6bc2cb857cb2eebeada8ac0cce",
+          "block": "61544368",
+          "ts": 1795230742,
+          "ok": true,
+          "fill": {
+            "buyToken": true,
+            "paid": "2755862",
+            "received": "282766950220948932276"
+          }
+        },
+        {
+          "chain": "unichain",
+          "tx": "0xaba4bcbf587022fb79e0256c00bdfe84134adc27577db96c10e0dcdff93a07ad",
+          "block": "68378315",
+          "ts": 1795230743,
+          "ok": true,
+          "fill": {
+            "buyToken": false,
+            "paid": "282766957958199922379",
+            "received": "2794723"
+          }
+        }
+      ],
+      "closed": {
+        "chain": "lasna",
+        "tx": "0x2c87df7cadd2c9f4781458829367d0ff1ab28448f8136fa5bd5b2ef82cbb3a8c",
+        "block": "8861194",
+        "ts": 1795230742,
+        "timedOut": false,
+        "legFailed": false
+      },
+      "pending": false,
+      "latency": {
+        "nonce": "5",
+        "originToRequestCrossClock": 0,
+        "originToLeg": [
+          2,
+          3
+        ],
+        "originToLegsDone": 3,
+        "requestToClosed": 2,
+        "ok": true,
+        "pending": false
+      }
+    },
+    {
+      "nonce": "4",
+      "cheapSide": 1,
+      "origin": {
+        "chain": "unichain",
+        "tx": "0x132add012859dec23e48e7f51bea11a0a234af90df5931611a1db1d3089953b9",
+        "block": "68376010",
+        "ts": 1795228438,
+        "swap": {
+          "buyToken": false,
+          "usdc": "7993933",
+          "token": "805931812000000000000"
+        }
+      },
+      "requested": {
+        "chain": "lasna",
+        "tx": "0x1c6b7be2de1ae669e7bc24a65ce62116dd7213d1f9235b91b9a49a7280b40546",
+        "block": "8859025",
+        "ts": 1795228438
+      },
+      "legs": [
+        {
+          "chain": "base",
+          "tx": "0x817208cf6b906efb4e3c519952f125439f60d4fa7c5b7eaa8d967eacbe167db6",
+          "block": "61532856",
+          "ts": 1795228440,
+          "ok": true,
+          "fill": {
+            "buyToken": false,
+            "paid": "474041815755435898559",
+            "received": "4779466"
+          }
+        },
+        {
+          "chain": "unichain",
+          "tx": "0x7b4245e1afadfbedf66c4539983db9973e9b7b07a4d0e85d52917d2d75909281",
+          "block": "68376012",
+          "ts": 1795228440,
+          "ok": true,
+          "fill": {
+            "buyToken": true,
+            "paid": "4667742",
+            "received": "474041634417195543692"
+          }
+        }
+      ],
+      "closed": {
+        "chain": "lasna",
+        "tx": "0x495807286e75eea0a98f6fbfde775b304c02e72ed97f6112a23a2ce4fa8a0572",
+        "block": "8859027",
+        "ts": 1795228440,
+        "timedOut": false,
+        "legFailed": false
+      },
+      "pending": false,
+      "latency": {
+        "nonce": "4",
+        "originToRequestCrossClock": 0,
+        "originToLeg": [
+          2,
+          2
+        ],
+        "originToLegsDone": 2,
+        "requestToClosed": 2,
+        "ok": true,
+        "pending": false
+      }
+    },
+    {
+      "nonce": "3",
+      "cheapSide": 1,
+      "origin": {
+        "chain": "unichain",
+        "tx": "0xf219e8146726634e5451defad7aa42a1679b6a2bd014e9cb2590879258445679",
+        "block": "68375956",
+        "ts": 1795228384,
+        "swap": {
+          "buyToken": false,
+          "usdc": "5277667",
+          "token": "521493287000000000000"
+        }
+      },
+      "requested": {
+        "chain": "lasna",
+        "tx": "0x12627cf882db69fde5a3c5dc2ffe7341715ef8fdd43d4b365085d576f81c4634",
+        "block": "8858976",
+        "ts": 1795228383
+      },
+      "legs": [
+        {
+          "chain": "base",
+          "tx": "0x6cb733f4eecc019634a8204db4357c5b930c7bc92494fd954382a7637f6e6cd6",
+          "block": "61532584",
+          "ts": 1795228385,
+          "ok": true,
+          "fill": {
+            "buyToken": false,
+            "paid": "260616252567559484121",
+            "received": "2657462"
+          }
+        },
+        {
+          "chain": "unichain",
+          "tx": "0x01c1dbb33a90c36d1254eae851f8bc0ae9577b8e4d6e421616eefabd7889feb1",
+          "block": "68375958",
+          "ts": 1795228386,
+          "ok": true,
+          "fill": {
+            "buyToken": true,
+            "paid": "2622845",
+            "received": "260616195430416883028"
+          }
+        }
+      ],
+      "closed": {
+        "chain": "lasna",
+        "tx": "0x55fbcc0d3cc7107f395b91a28255bb1c963ac55a5f65dcb67efd11e80f796385",
+        "block": "8858978",
+        "ts": 1795228385,
+        "timedOut": false,
+        "legFailed": false
+      },
+      "pending": false,
+      "latency": {
+        "nonce": "3",
+        "originToRequestCrossClock": -1,
+        "originToLeg": [
+          1,
+          2
+        ],
+        "originToLegsDone": 2,
+        "requestToClosed": 2,
+        "ok": true,
+        "pending": false
+      }
+    },
+    {
+      "nonce": "2",
+      "cheapSide": 1,
+      "origin": {
+        "chain": "unichain",
+        "tx": "0xf51d798aa922ec837d6a7ad3fe7b74bf22ff7f461481fd1ddca4c66b1bebd318",
+        "block": "68375947",
+        "ts": 1795228375,
+        "swap": {
+          "buyToken": false,
+          "usdc": "9022328",
+          "token": "878915925000000000000"
+        }
+      },
+      "requested": {
+        "chain": "lasna",
+        "tx": "0xe9ebfea12347887e2877a3b713480f07542c90b1a15b778ec5df940732990c47",
+        "block": "8858968",
+        "ts": 1795228374
+      },
+      "legs": [
+        {
+          "chain": "base",
+          "tx": "0x8ff0970887853fc07dad94cc2cbe1e3b70c7f1a5d3d6f30ccb738efdfb081cdd",
+          "block": "61532540",
+          "ts": 1795228376,
+          "ok": true,
+          "fill": {
+            "buyToken": false,
+            "paid": "419706848813590644370",
+            "received": "4354201"
+          }
+        },
+        {
+          "chain": "unichain",
+          "tx": "0xfc69ad752f2c3048b6015d83fe18794a8e8d1a39d6ad36dba895b0ab865becf0",
+          "block": "68375949",
+          "ts": 1795228377,
+          "ok": true,
+          "fill": {
+            "buyToken": true,
+            "paid": "4262625",
+            "received": "419706780825842422940"
+          }
+        }
+      ],
+      "closed": {
+        "chain": "lasna",
+        "tx": "0x2e1e83740beba61ed26a23246d6ffedde51aa862bfb46f6804b7562435e8c51c",
+        "block": "8858970",
+        "ts": 1795228376,
+        "timedOut": false,
+        "legFailed": false
+      },
+      "pending": false,
+      "latency": {
+        "nonce": "2",
+        "originToRequestCrossClock": -1,
+        "originToLeg": [
+          1,
+          2
+        ],
+        "originToLegsDone": 2,
+        "requestToClosed": 2,
+        "ok": true,
+        "pending": false
+      }
+    },
     {
       "nonce": "1",
       "cheapSide": 0,
@@ -33,7 +594,12 @@
         "chain": "unichain",
         "tx": "0xfa6cb57de334921d50bdda7c10e190376cf6600bf4a31c59368f08250a4e97b2",
         "block": "68284474",
-        "ts": 1795136902
+        "ts": 1795136902,
+        "swap": {
+          "buyToken": true,
+          "usdc": "20000000",
+          "token": "1903854853686992547441"
+        }
       },
       "requested": {
         "chain": "lasna",
@@ -47,14 +613,24 @@
           "tx": "0xd87c7be443e98af70aac8cf0ece0094f8ebb6ac0b76f3c4dc89b6d64c7def20c",
           "block": "61075173",
           "ts": 1795136903,
-          "ok": true
+          "ok": true,
+          "fill": {
+            "buyToken": true,
+            "paid": "9608635",
+            "received": "937402221914402473803"
+          }
         },
         {
           "chain": "unichain",
           "tx": "0xa7a13b48f516ab4e313f07356897ed106c9ad1f216686265f2093ac27f17933e",
           "block": "68284476",
           "ts": 1795136904,
-          "ok": true
+          "ok": true,
+          "fill": {
+            "buyToken": false,
+            "paid": "937402289257704367327",
+            "received": "10081263"
+          }
         }
       ],
       "closed": {

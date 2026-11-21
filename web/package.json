@@ -10,7 +10,8 @@
     "lint": "oxlint --deny-warnings",
     "typecheck": "tsc -b",
     "test": "vitest run",
-    "latency": "node scripts/latency.ts"
+    "latency": "node scripts/latency.ts",
+    "swaps": "node scripts/swaps.ts"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "5.3.0",

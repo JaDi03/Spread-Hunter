@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { latencyOf, legId, stats, type TradeTimeline } from './latency'
+import { latencyOf, legId, stats, swapOf } from './latency'
+import { trade1 } from './trade1.fixture'
 
 const RC = '0xA07fcfCbE127D14668Ffb93f41aFF270b151777F'
 
@@ -11,19 +12,6 @@ describe('legId', () => {
   })
 })
 
-// block timestamps of trade #1, read from the three chains
-const trade1: TradeTimeline = {
-  nonce: 1n,
-  cheapSide: 0,
-  origin: { chain: 'unichain', tx: '0xfa6cb57de334921d50bdda7c10e190376cf6600bf4a31c59368f08250a4e97b2', block: 68284474n, ts: 1795136902 },
-  requested: { chain: 'lasna', tx: '0x5930979bf0d29c8ed07262be278df1ac77122f2ce9d3fb8b83ed4b907f21c64a', block: 8772837n, ts: 1795136901 },
-  legs: [
-    { chain: 'base', tx: '0xd87c7be443e98af70aac8cf0ece0094f8ebb6ac0b76f3c4dc89b6d64c7def20c', block: 61075173n, ts: 1795136903, ok: true },
-    { chain: 'unichain', tx: '0xa7a13b48f516ab4e313f07356897ed106c9ad1f216686265f2093ac27f17933e', block: 68284476n, ts: 1795136904, ok: true },
-  ],
-  closed: null,
-  pending: false,
-}
 
 describe('latencyOf', () => {
   it('gives the README timings for trade #1', () => {
@@ -60,7 +48,7 @@ describe('latencyOf', () => {
   })
 
   it('marks a trade with a failed or missing leg as not ok', () => {
-    expect(latencyOf({ ...trade1, legs: [trade1.legs[0], { ...trade1.legs[1]!, ok: false }] }).ok).toBe(false)
+    expect(latencyOf({ ...trade1, legs: [trade1.legs[0], { ...trade1.legs[1]!, ok: false, fill: null }] }).ok).toBe(false)
     const missing = latencyOf({ ...trade1, legs: [trade1.legs[0], null] })
     expect(missing.ok).toBe(false)
     expect(missing.originToLegsDone).toBeNull()
@@ -71,5 +59,14 @@ describe('stats', () => {
   it('summarizes seconds', () => {
     expect(stats([3, 1, 2, 2])).toEqual({ n: 4, min: 1, median: 2, mean: 2, max: 3 })
     expect(stats([])).toBeNull()
+  })
+})
+
+describe('swapOf', () => {
+  it('reads the swapper side from the pool deltas, whichever currency is USDC', () => {
+    // USDC is currency0: the swapper paid 20 USDC (negative) and got the token
+    expect(swapOf(-20_000_000n, 1903854853686992547441n, true)).toEqual({ buyToken: true, usdc: 20_000_000n, token: 1903854853686992547441n })
+    // USDC is currency1: the swapper paid the token and got USDC
+    expect(swapOf(-5n * 10n ** 18n, 49_000n, false)).toEqual({ buyToken: false, usdc: 49_000n, token: 5n * 10n ** 18n })
   })
 })

@@ -4,6 +4,7 @@ import { FlowMap } from './components/FlowMap'
 import { HexRain } from './components/HexRain'
 import { LatencyPanel } from './components/LatencyPanel'
 import { PriceDuel } from './components/PriceDuel'
+import { ResultsPanel } from './components/ResultsPanel'
 import { SpreadChart } from './components/SpreadChart'
 import { StatusBar } from './components/StatusBar'
 import { Tape } from './components/Tape'
@@ -11,16 +12,17 @@ import { useInView } from './components/useInView'
 import { useMediaQuery } from './components/useMediaQuery'
 import { Vault } from './components/Vault'
 import { CHAINS, REACTIVE_CONTRACT, REPO_URL, SIDES } from './config/testnet'
-import { REPLAY_STEPS } from './replay'
+import { useReplay } from './components/useReplay'
 
 export default function App() {
   const feed = useFeed()
+  const replay = useReplay(feed)
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   const mapRef = useRef<HTMLDivElement>(null)
   const mapVisible = useInView(mapRef)
   const rainHashes = useMemo(
-    () => [...feed.hashes, ...REPLAY_STEPS.map((s) => s.tx), REACTIVE_CONTRACT, ...SIDES.flatMap((s) => [s.executor, s.poolId])],
-    [feed.hashes],
+    () => [...feed.hashes, ...replay.steps.map((s) => s.tx), REACTIVE_CONTRACT, ...SIDES.flatMap((s) => [s.executor, s.poolId])],
+    [feed.hashes, replay],
   )
 
   return (
@@ -39,7 +41,7 @@ export default function App() {
           <span className="h1-sub">A reactive contract buys the cheap one and sells the dear one in seconds.</span>
         </h1>
         <p>
-          Prices, inventories and events are read live from Base Sepolia, Unichain Sepolia and Reactive Lasna, with no server of ours in between. The replay of the first cycle is marked as such.
+          Prices, inventories and events are read live from Base Sepolia, Unichain Sepolia and Reactive Lasna, with no server of ours in between. The replay of the last trade is marked as such.
         </p>
       </section>
 
@@ -48,10 +50,12 @@ export default function App() {
       <section className="stage">
         <div className="stage-map" ref={mapRef}>
           <HexRain hashes={rainHashes} reducedMotion={reducedMotion} visible={mapVisible} />
-          <FlowMap feed={feed} reducedMotion={reducedMotion} visible={mapVisible} />
+          <FlowMap feed={feed} replay={replay} reducedMotion={reducedMotion} visible={mapVisible} />
         </div>
         <Tape feed={feed} />
       </section>
+
+      <ResultsPanel />
 
       <LatencyPanel />
 
