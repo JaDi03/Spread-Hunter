@@ -1,5 +1,5 @@
-import { encodeAbiParameters, keccak256, parseEventLogs, TransactionReceiptNotFoundError, type Client } from 'viem'
-import { getBlock, getBlockNumber, getContractEvents, getTransactionReceipt, readContract } from 'viem/actions'
+import { BlockNotFoundError, encodeAbiParameters, keccak256, parseEventLogs, TransactionReceiptNotFoundError, type Client } from 'viem'
+import { getBlock, getContractEvents, getTransactionReceipt, readContract } from 'viem/actions'
 import { CHAINS, REACTIVE_CONTRACT, SIDES, type ChainKey } from '../config/testnet.ts'
 import { executorAbi, poolManagerAbi, reactiveAbi } from './abi.ts'
 
@@ -97,12 +97,19 @@ async function stampOf(c: Client, chain: ChainKey, tx: `0x${string}`, block: big
 
 /** The block on `chain` closest to a timestamp, from the chain's head and its steady block time. */
 export async function blockNear(c: Client, ts: number, blockSeconds: number): Promise<bigint> {
-  const head = await getBlockNumber(c)
-  const hb = await getBlock(c, { blockNumber: head })
+  // one call for the head's number and time: a public RPC spreads calls over nodes that can lag each other
+  const hb = await getBlock(c, { blockTag: 'latest' })
+  const head = hb.number
   let guess = head - BigInt(Math.max(0, Math.round((Number(hb.timestamp) - ts) / blockSeconds)))
+  if (guess >= head) return head
   // one correction step: block times drift a little over long spans
-  const gb = await getBlock(c, { blockNumber: guess })
-  guess += BigInt(Math.round((ts - Number(gb.timestamp)) / blockSeconds))
+  try {
+    const gb = await getBlock(c, { blockNumber: guess })
+    guess += BigInt(Math.round((ts - Number(gb.timestamp)) / blockSeconds))
+  } catch (e) {
+    // a node behind the head may not have the block yet; the uncorrected guess is within the search slack
+    if (!(e instanceof BlockNotFoundError)) throw e
+  }
   return guess < 0n ? 0n : guess > head ? head : guess
 }
 
