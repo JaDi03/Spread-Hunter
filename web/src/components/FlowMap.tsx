@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import type { FeedEvent, FeedState } from '../chain/feed'
 import { formatUnits } from '../chain/math'
-import { CHAINS, TOKEN_DECIMALS, TOKEN_SYMBOL, USDC_DECIMALS } from '../config/testnet'
-import { REPLAY_LOOP_MS, REPLAY_PROFIT, REPLAY_PROFIT_AT, REPLAY_STEPS, type Edge } from '../replay'
+import { TOKEN_DECIMALS, TOKEN_SYMBOL, USDC_DECIMALS } from '../config/testnet'
+import { REPLAY_LOOP_MS, REPLAY_PROFIT_AT, replayHeading, type Edge, type Replay } from '../replay'
 import { TxLink } from './TxLink'
 import { useClock } from './useClock'
 import { useMediaQuery } from './useMediaQuery'
@@ -138,11 +138,12 @@ function particlesFor(e: FeedEvent): Particle[] {
 
 interface Props {
   feed: FeedState
+  replay: Replay
   reducedMotion: boolean
   visible: boolean
 }
 
-export function FlowMap({ feed, reducedMotion, visible }: Props) {
+export function FlowMap({ feed, replay, reducedMotion, visible }: Props) {
   const narrow = useMediaQuery('(max-width: 720px)')
   const l = narrow ? NARROW : WIDE
   const now = useClock(reducedMotion ? 500 : undefined, !visible)
@@ -157,22 +158,15 @@ export function FlowMap({ feed, reducedMotion, visible }: Props) {
 
   const replayParticles: Particle[] = useMemo(
     () =>
-      REPLAY_STEPS.flatMap((s) =>
-        s.edges.map((edge, k) => {
-          const label =
-            edge === 'in-uni' ? 'buy · 20 USDC'
-            : edge === 'uni-lasna' ? 'Swap log'
-            : edge === 'lasna-base' ? 'BUY 9.61 USDC'
-            : edge === 'lasna-uni' ? 'SELL 937.40 HUNT'
-            : edge === 'exec-base' ? 'bought 937.40'
-            : edge === 'exec-uni' ? 'sold for 10.08'
-            : 'LegExecuted'
+      replay.steps.flatMap((s) =>
+        s.particles.map(({ edge, label }, k) => {
           const delay = edge.startsWith('leg') ? PARTICLE_MS : edge.startsWith('lasna') ? 900 : 0
-          return { id: `replay:${s.at}:${k}`, edge, label, start: s.at + delay, dur: PARTICLE_MS }
+          return { id: `replay:${replay.nonce}:${s.at}:${k}`, edge, label, start: s.at + delay, dur: PARTICLE_MS }
         }),
       ),
-    [],
+    [replay],
   )
+  const heading = replayHeading(replay, useClock(30_000, !visible))
 
   const active: { p: Particle; t: number }[] = isLive
     ? liveParticles.map((p) => ({ p, t: (now - p.start) / p.dur })).filter((x) => x.t >= 0 && x.t <= 1)
@@ -181,8 +175,8 @@ export function FlowMap({ feed, reducedMotion, visible }: Props) {
   const hot = new Set<NodeKey>()
   for (const { p, t } of active) hot.add(t > 0.85 ? EDGES[p.edge].to : EDGES[p.edge].from)
 
-  const step = isLive ? -1 : REPLAY_STEPS.reduce((acc, s, i) => (rt >= s.at ? i : acc), -1)
-  const profitOn = !isLive && rt >= REPLAY_PROFIT_AT
+  const step = isLive ? -1 : replay.steps.reduce((acc, s, i) => (rt >= s.at ? i : acc), -1)
+  const profitOn = !isLive && replay.profit !== null && rt >= REPLAY_PROFIT_AT
 
   const pb = feed.pools[0]
   const pu = feed.pools[1]
@@ -196,7 +190,7 @@ export function FlowMap({ feed, reducedMotion, visible }: Props) {
           {isLive ? 'LIVE' : 'REPLAY'}
         </span>
         <span className="flow-note">
-          {isLive ? 'Events from the chains, as they arrive' : 'The first live cycle, 2026-11-19, slowed down. Real values and transactions.'}
+          {isLive ? 'Events from the chains, as they arrive' : heading.note}
         </span>
       </div>
       <svg className="flow-svg" viewBox={`0 0 ${l.w} ${l.h}`} role="img" aria-label="Map of one arbitrage cycle across Base, Reactive Lasna and Unichain">
@@ -236,15 +230,15 @@ export function FlowMap({ feed, reducedMotion, visible }: Props) {
         {profitOn && (
           <g className="profit-pop">
             <text x={l.nodes.lasna.x} y={l.nodes.lasna.y + (narrow ? 118 : 108)} textAnchor="middle" className="profit-text">
-              +{REPLAY_PROFIT} USDC
+              {replay.profit} USDC
             </text>
           </g>
         )}
       </svg>
 
-      <div className="steps-head">REPLAY · the first live cycle, 2026-11-19, from its real transactions</div>
+      <div className="steps-head">REPLAY · {heading.title}, from its real transactions</div>
       <ol className="steps">
-        {REPLAY_STEPS.map((s, i) => (
+        {replay.steps.map((s, i) => (
           <li key={s.tx} className={i === step ? 'on' : i < step ? 'done' : ''}>
             <span className="step-t">{s.real}</span>
             <span className="step-l">
@@ -254,14 +248,16 @@ export function FlowMap({ feed, reducedMotion, visible }: Props) {
             <TxLink chain={s.chain} hash={s.tx} />
           </li>
         ))}
-        <li className={profitOn ? 'on profit' : 'profit'}>
-          <span className="step-t">2 s</span>
-          <span className="step-l">
-            <b>Profit +{REPLAY_PROFIT} USDC</b>
-            <span>the amount the reactive contract worked out before sending the legs</span>
-          </span>
-          <span className="tx-dim">{CHAINS.lasna.short}</span>
-        </li>
+        {replay.profit !== null && (
+          <li className={profitOn ? 'on profit' : 'profit'}>
+            <span className="step-t">{replay.profitReal}</span>
+            <span className="step-l">
+              <b>Profit {replay.profit} USDC</b>
+              <span>USDC received on the sell leg minus USDC paid on the buy leg</span>
+            </span>
+            <span className="tx-dim">both legs</span>
+          </li>
+        )}
       </ol>
     </div>
   )
