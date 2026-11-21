@@ -96,7 +96,7 @@ async function stampOf(c: Client, chain: ChainKey, tx: `0x${string}`, block: big
 }
 
 /** The block on `chain` closest to a timestamp, from the chain's head and its steady block time. */
-async function blockNear(c: Client, ts: number, blockSeconds: number): Promise<bigint> {
+export async function blockNear(c: Client, ts: number, blockSeconds: number): Promise<bigint> {
   const head = await getBlockNumber(c)
   const hb = await getBlock(c, { blockNumber: head })
   let guess = head - BigInt(Math.max(0, Math.round((Number(hb.timestamp) - ts) / blockSeconds)))
@@ -106,7 +106,7 @@ async function blockNear(c: Client, ts: number, blockSeconds: number): Promise<b
   return guess < 0n ? 0n : guess > head ? head : guess
 }
 
-const BLOCK_SECONDS: Record<'base' | 'unichain', number> = { base: 0.2, unichain: 1 }
+export const BLOCK_SECONDS: Record<'base' | 'unichain', number> = { base: 0.2, unichain: 1 }
 /** The contract's MAX_LEG_TIMEOUT and UNLOCK_MARGIN, seconds (SpreadHunterReactive.sol) */
 const MAX_LEG_TIMEOUT = 600
 const UNLOCK_MARGIN = 60
