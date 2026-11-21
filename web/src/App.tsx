@@ -4,6 +4,7 @@ import { FlowMap } from './components/FlowMap'
 import { HexRain } from './components/HexRain'
 import { LatencyPanel } from './components/LatencyPanel'
 import { PriceDuel } from './components/PriceDuel'
+import { ResultsPanel } from './components/ResultsPanel'
 import { SpreadChart } from './components/SpreadChart'
 import { StatusBar } from './components/StatusBar'
 import { Tape } from './components/Tape'
@@ -53,6 +54,8 @@ export default function App() {
         </div>
         <Tape feed={feed} />
       </section>
+
+      <ResultsPanel />
 
       <LatencyPanel />
 

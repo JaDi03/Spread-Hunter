@@ -736,6 +736,23 @@ button:focus-visible {
   color: var(--muted);
 }
 
+/* results: same frame as the latency panel, with longer numbers */
+.res-num {
+  font-size: clamp(30px, 4.4vw, 52px);
+  overflow-wrap: anywhere;
+}
+.res-num small {
+  font-size: 0.4em;
+  letter-spacing: 0.04em;
+}
+.res-drift {
+  color: var(--text);
+}
+.res-sides {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 16px 16px 0;
+}
+
 /* lower: chart and vault */
 .lower {
   display: grid;
