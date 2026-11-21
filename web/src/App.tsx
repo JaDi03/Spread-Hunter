@@ -1,7 +1,6 @@
-import { useMemo, useRef } from 'react'
+import { useRef } from 'react'
 import { useFeed } from './chain/useFeed'
 import { FlowMap } from './components/FlowMap'
-import { HexRain } from './components/HexRain'
 import { LatencyPanel } from './components/LatencyPanel'
 import { PriceDuel } from './components/PriceDuel'
 import { ResultsPanel } from './components/ResultsPanel'
@@ -20,10 +19,6 @@ export default function App() {
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   const mapRef = useRef<HTMLDivElement>(null)
   const mapVisible = useInView(mapRef)
-  const rainHashes = useMemo(
-    () => [...feed.hashes, ...replay.steps.map((s) => s.tx), REACTIVE_CONTRACT, ...SIDES.flatMap((s) => [s.executor, s.poolId])],
-    [feed.hashes, replay],
-  )
 
   return (
     <div className="page">
@@ -49,7 +44,6 @@ export default function App() {
 
       <section className="stage">
         <div className="stage-map" ref={mapRef}>
-          <HexRain hashes={rainHashes} reducedMotion={reducedMotion} visible={mapVisible} />
           <FlowMap feed={feed} replay={replay} reducedMotion={reducedMotion} visible={mapVisible} />
         </div>
         <Tape feed={feed} />

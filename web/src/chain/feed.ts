@@ -1,4 +1,4 @@
-import { createClient, http, toHex, type Client } from 'viem'
+import { createClient, http, type Client } from 'viem'
 import { getBalance, getBlock, getContractEvents, readContract } from 'viem/actions'
 import {
   CHAINS,
@@ -64,12 +64,10 @@ export interface FeedState {
   reactive: ReactiveLive | null
   events: FeedEvent[]
   history: PricePoint[]
-  hashes: string[]
 }
 
 const MAX_EVENTS = 80
 const MAX_HISTORY = 360
-const MAX_HASHES = 120
 const MAX_BACKOFF_MS = 60_000
 const RPC_TIMEOUT_MS = 10_000
 
@@ -82,7 +80,6 @@ let state: FeedState = {
   reactive: null,
   events: [],
   history: [],
-  hashes: [],
 }
 
 const listeners = new Set<() => void>()
@@ -122,11 +119,6 @@ function pushEvents(evts: FeedEvent[]) {
   set((s) => ({ ...s, events: [...fresh.reverse(), ...s.events].slice(0, MAX_EVENTS) }))
 }
 
-function pushHashes(hs: string[]) {
-  const ok = hs.filter((h) => typeof h === 'string' && /^0x[0-9a-fA-F]+$/.test(h)).slice(0, 12)
-  if (ok.length === 0) return
-  set((s) => ({ ...s, hashes: [...ok, ...s.hashes].slice(0, MAX_HASHES) }))
-}
 
 function logRange(key: ChainKey, head: bigint, firstSpan: bigint) {
   const max = CHAINS[key].maxLogRange
@@ -216,7 +208,6 @@ async function pollSide(i: 0 | 1) {
       status: { ...s.status, [key]: { block: block.number, blockHash: block.hash, updatedAt: now, latencyMs: latency, failing: false } },
     }
   })
-  pushHashes([block.hash ?? '', ...block.transactions])
   pushEvents(evts)
 }
 
@@ -287,7 +278,6 @@ async function pollLasna() {
     reactive: { sides: [side(s0), side(s1)], paused, trades, failuresInARow: failures, cooldownUntil: cooldown, balance, inFlight: flight.active },
     status: { ...s.status, lasna: { block: block.number, blockHash: block.hash, updatedAt: now, latencyMs: latency, failing: false } },
   }))
-  pushHashes([block.hash ?? '', toHex(block.number)])
   pushEvents(evts)
 }
 
