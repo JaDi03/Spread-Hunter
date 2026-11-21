@@ -115,7 +115,7 @@ The tests run the Executor against Uniswap's real PoolManager, compiled locally,
 
 ## Live dashboard
 
-`web/` is a page that reads both pools and the reactive contract straight from the public RPCs, with no backend: the HUNT price on each chain, the spread against the two pool fees, each side's inventory as the reactive contract last saw it, and a map of the cycle. New swaps and trades show up on the map while the page is open; when none is happening, it replays the cycle above with its real transactions, and says so. It needs [Node](https://nodejs.org/) 24 and [pnpm](https://pnpm.io/installation):
+`web/` is a page that reads both pools and the reactive contract straight from the public RPCs, with no backend: the HUNT price on each chain, the spread against the two pool fees, each side's inventory as the reactive contract last saw it, and a map of the cycle. New swaps and trades show up on the map while the page is open; when none is happening, it replays the newest trade with its real transactions, and says so. It needs [Node](https://nodejs.org/) 24 and [pnpm](https://pnpm.io/installation):
 
 ```bash
 cd web
@@ -126,6 +126,10 @@ pnpm dev
 Addresses and RPC URLs live in `web/src/config/testnet.ts`.
 
 To measure the latency of every trade the reactive contract has made, from the swap that started it to both legs, run `pnpm latency` in `web/`. It reads the three chains, prints one row per trade with a summary, and writes `web/src/data/latency.json`, which the dashboard shows. Times are differences of whole-second block timestamps, so each one is accurate to about a second. Lasna's block clock can read behind Base and Unichain (in the first trade, Lasna stamped its request a second before the swap that caused it), so Lasna times are only compared with other Lasna times.
+
+`pnpm swaps` in `web/` reads every swap of both pools since the reactive contract went live and writes the price after each one to `web/src/data/swaps.json`, which feeds the spread chart. Later runs only read the new blocks.
+
+To put the dashboard online, import the repo in [Vercel](https://vercel.com/docs/monorepos), set the Root Directory to `web` and add the environment variable `ENABLE_EXPERIMENTAL_COREPACK=1`, so the build uses the pnpm version pinned in `web/package.json` ([Vercel docs](https://vercel.com/docs/builds/configure-a-build)). The security headers come from `web/vercel.json`.
 
 ## Deploy a pair
 
