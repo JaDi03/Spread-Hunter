@@ -30,7 +30,7 @@ export function HexRain({ hashes, reducedMotion, visible }: { hashes: string[]; 
     let h = 0
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     const drops: Drop[] = []
-    const palette = ['rgba(120,150,255,', 'rgba(255,90,180,', 'rgba(29,255,122,', 'rgba(220,220,210,']
+    const palette = ['rgba(35,70,200,', 'rgba(184,18,95,', 'rgba(10,112,56,', 'rgba(20,20,18,']
 
     const resize = () => {
       w = canvas.clientWidth
@@ -74,7 +74,8 @@ export function HexRain({ hashes, reducedMotion, visible }: { hashes: string[]; 
           const yy = d.y + j * FONT_PX
           if (yy < -FONT_PX || yy > h + FONT_PX) continue
           const head = j === d.text.length - 1
-          const a = head ? 0.8 : 0.07 + (j / d.text.length) * 0.3
+          // dark glyphs on paper: kept faint so the map and its labels stay readable
+          const a = head ? 0.22 : 0.02 + (j / d.text.length) * 0.08
           ctx.fillStyle = `${d.color}${a})`
           ctx.fillText(d.text[j], d.x, yy)
         }
